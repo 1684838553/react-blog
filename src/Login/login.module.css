@@ -1,0 +1,12 @@
+.bg {
+    height: calc(100vh - 60px);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url("https://img-blog.csdnimg.cn/b8d7b22aaf9e4b49b7b90b9f927426c3.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAZHJ1bmvllrXlkqo=,size_20,color_FFFFFF,t_70,g_se,x_16");
+}
+
+.form {
+    position: absolute;
+    top: 20%;
+    right: 30%;
+}
