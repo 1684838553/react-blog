@@ -1,34 +1,144 @@
-import React from 'react'
-import styles from './header.module.css'
-import MyIcon from '../MyIcon/my-icon'
-import LogoSrc from '../../assets/logo.jpeg'
+import React, { useEffect, useState } from 'react'
+import styles from './login.module.css'
+import { Form, Input, Button, Checkbox, message } from 'antd';
+import { login, register } from '../api/use'
+import { loginInfo } from '../util/session-obj';
 
-const IconfontUrl = MyIcon('//at.alicdn.com/t/font_3325824_y2sjp3f7s1i.js')
 
-export default function Header() {
+function Login() {
+    const [form] = Form.useForm()
+    const loginObject = loginInfo()
+    const pathname = window.location.pathname
+    const page = pathname ? pathname.slice(1) : 'login'
+    const [pageName, setPageName] = useState(page)
 
-    function login() {
-        // console.log(this.history, 'ppppp')
-        // console.log(window.location)
-        window.location.href = '/login'
+
+    useEffect(() => {
+        if (pageName === 'login') {
+            form.setFieldsValue({
+                email: loginObject.email,
+                password: loginObject.password
+            })
+        }
+    }, [])
+
+    const loginSubmit = () => {
+        const values = form.getFieldsValue()
+
+        const param = {
+            user: {
+                email: values.email,
+                password: values.password
+            }
+        }
+
+        if (values.remember) {
+            sessionStorage.setItem('loginInfo', JSON.stringify(param.user))
+        }
+
+        login(param).then(({ data, status }) => {
+            if (status === 200) {
+                sessionStorage.setItem('user', JSON.stringify(data))
+                message.success('登录成功')
+                window.location.href = '/'
+            } else if (status === 400) {
+                const errMssage = data.errors.map((item: any) => item.msg).join(',')
+                message.error(errMssage)
+            } else {
+                throw new Error(data)
+            }
+
+        })
+    };
+
+    const toRegisterPage = () => {
+        window.location.href = '/register'
+        setPageName('register')
+        form.resetFields()
     }
 
+    const registerSubmit = () => {
+        const values = form.getFieldsValue()
+        console.log(values, 'registerSubmit')
+        register({ user: { ...values } }).then(({ data, status }) => {
+            console.log(data, status, 'uuhhu')
+            if (status === 201) {
+                message.success('注册成功,请登录')
+                window.location.href = '/login'
+                setPageName('login')
+            } else if (status === 400) {
+                const errMssage = data.errors.map((item: any) => item.msg).join(',')
+                message.error(errMssage)
+            } else {
+                throw new Error(data)
+            }
+        })
+    }
+
+
     return (
-        <div className={styles.top}>
-            <div className={styles.topLeft}>
-                <a href="https://github.com/1684838553" target="_blank"><IconfontUrl className={styles.icons} type="icon-github" /></a>
-                <a href="https://blog.csdn.net/jdrunk?type=blog" target="_blank"><IconfontUrl className={styles.icons} type="icon-csdn" /></a>
-                <a href="https://juejin.cn/my-course" target="_blank"><IconfontUrl className={styles.icons} type="icon-juejin" /></a>
-            </div>
-            <div className={styles.topCenter}>
-                <div className={styles.menus}>HOME</div>
-                <div className={styles.menus}>WRITE</div>
-                <div className={styles.menus} onClick={login}>LOGIN</div>
-            </div>
-            <div className={styles.topRight}>
-                <img width="40" height="40" className={styles.image} src={LogoSrc} alt="" />
-                {"drunk 喵咪"}
-            </div>
+        <div className={styles.bg}>
+            <Form
+                className={styles.form}
+                layout="vertical"
+                initialValues={{ remember: true }}
+                autoComplete="off"
+                form={form}
+            >
+                <div className={styles.title}>{pageName === 'login' ? 'Login' : 'Register'}</div>
+
+                {
+                    pageName === 'login' ? null : <Form.Item
+                        label="Username"
+                        name="username"
+                    >
+                        <Input />
+                    </Form.Item>
+                }
+
+                <Form.Item
+                    label="Email"
+                    name="email"
+                >
+                    <Input />
+                </Form.Item>
+
+
+                <Form.Item
+                    label="Password"
+                    name="password"
+                >
+                    <Input.Password />
+                </Form.Item>
+
+                {
+                    pageName === 'login' ?
+                        <div className={styles.col}>
+                            <Form.Item name="remember" valuePropName="checked" noStyle>
+                                <Checkbox>记住密码</Checkbox>
+                            </Form.Item>
+
+                            <Button type="link" onClick={toRegisterPage} className={styles.register}>
+                                注册
+                            </Button>
+                        </div> : null
+                }
+
+                <Form.Item>
+                    {
+                        pageName === 'login' ?
+                            <Button block type="primary" onClick={loginSubmit}>
+                                Login
+                            </Button> :
+                            <Button block type="primary" onClick={registerSubmit}>
+                                Register
+                            </Button>
+                    }
+                </Form.Item>
+            </Form>
         </div>
     );
 }
+
+export default Login
+
