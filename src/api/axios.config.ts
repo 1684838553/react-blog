@@ -1,5 +1,8 @@
-import axios from 'axios'
+import axios, { AxiosRequestHeaders } from 'axios'
 import { message } from 'antd';
+import { userInfo } from '../util/session-obj';
+
+const user = userInfo()
 
 const service = axios.create({
     baseURL: 'http://localhost:3000/api',
@@ -13,14 +16,11 @@ const service = axios.create({
 
 // 请求拦截
 service.interceptors.request.use(
-    config => {
+    (config: any) => {
         console.log(config, '请求拦截')
-        // 在发送请求之前做什么
-        if (config.method === "post") {
-            // 序列化
-            // config.data = qs.stringify(config.data);
-            // config.data = JSON.stringify(config.data);
-            // 温馨提示,若是贵公司的提交能直接接受json 格式,可以不用 qs 来序列化的
+        const token = user?.token
+        if (token) {
+            (config.headers as AxiosRequestHeaders).Authorization = `Bearer ${token}`
         }
         return config;
     },
@@ -34,16 +34,16 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response => {
         console.log(response, '响应拦截')
-        if (response?.status === 200) {
-            return Promise.resolve({ data: response?.data, status: response?.status });
-        } else {
-            return Promise.reject(response);
-        }
+        return Promise.resolve({ data: response?.data, status: response?.status });
     },
     ({ response }) => {
         return Promise.resolve({ data: response?.data, status: response?.status });
     }
 );
+
+export function get(url: string, param: any = {}) {
+    return service.get(url, { params: param })
+}
 
 
 export default service
