@@ -1,0 +1,13 @@
+.wrapper {
+    padding: 26px;
+}
+
+.btnText {
+    color: #1890ff;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.content {
+    cursor: pointer;
+}
