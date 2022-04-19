@@ -7,6 +7,23 @@
 
 .form {
     position: absolute;
-    top: 20%;
+    top: 25%;
     right: 30%;
+}
+
+.title {
+    font-size: 30px;
+    font-weight: bolder;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.register {
+    float: right;
+    position: relative;
+    bottom: 7px;
+}
+
+.col {
+    margin-bottom: 24px;
 }
