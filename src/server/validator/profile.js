@@ -31,9 +31,9 @@ exports.updateArticle = [
     // 校验修改的文章作者是否是当前用户
     async (req, res, next) => {
         // req.user._id 是对象类型，转成字符串比较
-        if (req.user._id.toString() !== req.article.author.toString()) {
-            return res.status(403).end()
-        }
+        // if (req.user._id.toString() !== req.article.author.toString()) {
+        //     return res.status(403).end()
+        // }
         next()
     }
 ]
