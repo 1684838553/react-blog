@@ -6,6 +6,12 @@ const cors = require("cors");
 const errorHandle = require("./middleware/error-handle");
 require("./model/index");
 
+// 为客户提供跨域资源请求
+app.use(cors({
+  origin: 'http://localhost:8000',
+  credentials: true,
+}));
+
 // 配置解析表单请求体：application/json
 app.use(express.json());
 
@@ -14,9 +20,6 @@ app.use(express.urlencoded());
 
 // 日志输出
 app.use(morgan("dev"));
-
-// 为客户提供跨域资源请求
-app.use(cors());
 
 // 挂载路由
 app.use("/api", router);
