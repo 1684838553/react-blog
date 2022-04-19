@@ -4,8 +4,8 @@ const { Article, User } = require("../model");
 exports.getArticles = async (req, res, next) => {
     try {
         const {
-            limit = 20,
-            offset = 0,
+            pageSize = 20,
+            current = 0,
             tag,
             author
         } = req.query
@@ -17,26 +17,30 @@ exports.getArticles = async (req, res, next) => {
             filter.tagList = tag
         }
 
+        console.log(author, req.user, 'ppppp')
+
         // 这里的作者是指作者名
-        if (author) {
-            const user = await User.findOne({ username: author })
-            filter.author = user ? user._id : null
-        }
+        // filter.author = req.user._id
+        // if (author) {
+        //     const user = await User.findOne({ _id: author })
+        //     console.log(user, 'useruser')
+        //     filter.author = user ? user._id : null
+        // }
 
         // 总条数
         const articlesCount = await Article.countDocuments()
 
         // 分页
         const articles = await Article.find(filter)
-            .skip(offset)  // 跳过多少条
-            .limit(limit)   // 取多少条
+            .skip((current - 1) * pageSize)  // 跳过多少条
+            .limit(pageSize)   // 取多少条
             .sort({
                 // -1 倒序 1 正序
                 createdAt: -1
             })
         res.status(201).json({
             articles,
-            articlesCount
+            total: articlesCount
         })
     } catch (err) {
         next(err)
