@@ -1,0 +1,22 @@
+.write {
+    margin: auto;
+    width: 50%;
+    height: calc(100vh - 60px);
+}
+
+.writeImg {
+    margin-bottom: 20px;
+    width: 100%;
+    height: 250px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+
+.input {
+    margin-bottom: 20px;
+}
+
+.input:last-child {
+    margin-top: 20px;
+}
