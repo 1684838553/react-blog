@@ -5,7 +5,7 @@ const auth = require('../middleware/auth')
 const profileValidator = require("../validator/profile");
 
 // 获取文章列表
-router.get('/', auth, contro.getArticles)
+router.get('/articles', auth, contro.getArticles)
 
 // 获取用户关注的作者文章列表
 router.get('/feed', auth, contro.getFeedArticles)
